@@ -1,0 +1,33 @@
+DELETE taxlots
+
+PUT taxlots
+{
+    "mappings": {
+	"owner": {
+	    "properties": {
+		"owner_line": "keyword",
+		"owner_ll_1": "keyword",
+		"owner_ll_2": "keyword",
+		"in_care_of": "keyword",
+		
+		"po_box": "keyword",
+		"street_add": "keyword",
+		"optional_a": "keyword",
+		"unit_numbe": "keyword",
+		"city": "keyword",
+		"state": "keyword",
+		"zip_code": "keyword"
+	    }
+	},
+	"parcel": {
+	    "properties": {
+		"account_id": "keyword",
+		"taxlots": "keyword"
+	    }
+	},
+	"situs": {
+	    "situs_addr": "keyword",
+	    "situs_city": "keyword"
+	}	
+    }
+}

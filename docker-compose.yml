@@ -1,0 +1,62 @@
+version: '3.7'
+services:
+  elasticsearch:
+    container_name: elasticsearch
+    image: elasticsearch:7.0.1
+    environment:
+      discovery.type: single-node
+      node.name: elasticsearch
+      cluster.name: docker-cluster
+      bootstrap.memory_lock: "true"
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    volumes:
+      - es01_data:/usr/share/elasticsearch/data
+    restart: unless-stopped
+    networks:
+      - elasticsearch_net
+
+
+  kibana:
+    container_name: es-kibana
+    image: kibana:7.0.1
+    env_file: .env
+    environment:
+      VIRTUAL_HOST: ${KIBANA_VIRTUAL_HOST}
+      VIRTUAL_PORT: 5601
+      NETWORK_ACCESS: internal
+      LETSENCRYPT_HOST: ${KIBANA_VIRTUAL_HOST}
+      LETSENCRYPT_MAIL: ${MY_EMAIL}
+    networks:
+      - proxy_net
+#    volumes:
+#      - kibana_data:???
+    restart: unless-stopped
+    networks:
+      - proxy_net
+      - elasticsearch_net
+    expose:
+      - "5601"
+    restart: unless-stopped
+
+
+volumes:
+  es01_data:
+    name: es01_data     
+
+networks:
+  # This is a network we share with our reverse proxy
+  proxy_net:
+    name: proxy_net
+    # Won't be created or destroyed with docker-compose up|down
+    external: true
+
+  # This network is only used for database access
+  elasticsearch_net:
+    name: elasticsearch_net
+    
